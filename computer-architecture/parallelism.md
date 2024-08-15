@@ -38,3 +38,35 @@
     - Multiple functional unit: has buffers, called reservation stations, which hold the operands and operation.Functional unit computes the result when the buffer contains all its operands then sends it to the commit unit or any functional units that needs it.
     - Commit uint: buffers the result until it is safe to put result into the registers or memory. Also used to supply operands, like forwarding logic in a statically scheduled pipeline.
 - In-order issue, out-of-order execution, in-order commit.
+# Data Level Parallelism
+- Parallel achieved by performing the same operation on independent data(e.g. dealing arrays with for loop).
+- SIMD
+# Thread Level Parallelism
+- Hardware multithreading: Typical multithreading technique.
+- Hype-threading(SMT): Two or more copies of PC and register file in one core(utilizing the resources of multiple issue processors). SMT always executes instructions from multiple threads, leaving it up to hardware to handle dependences.
+# Shared Memory Multiprocessor
+- A  single pyhsical address across all processors.
+- Two styles:
+    - Uniform Memory Access(UMA): The latency of memory access is about the same no matter which processor requests the access.
+    - Nonuniform Memory Access(NUMA): Main memory is devided and attached to different microprocessors or to different controller on the same chip.
+
+# Hardware Synchronization
+- Solution: Atomic read/write, read & write in single instruction
+- Must use shared memory(otherwise no critical session).
+- Common Implementation: Atomic swap of register <-> memory(e.g. amoswap.w.aq amoswap.w.rl), pair of instruction for "linked" read and write(e.g. lr.d sc.d).
+
+# Cache Coherence
+- One cache per processor.
+- A memory system is coherent if:
+    - A read by a processor P that follows a write by P, with no other writes by another processors always return the value written by P.
+    - A read by a processor P that follows a write by another processor returns the written value if the read and write are sufficiently seperated in time and no other writes between two access.(need to deal with cache).
+    - Two writes to the same location by any two processors are seen in the same order of all processors(serialized writes).
+## Enforcing Coherence
+- Track the state of any sharing of a data block cache.
+- Protocol: snooping.
+    - The caches are accessiable via some broadcast medium cache controller monitor on it to determine whether or not they have the requested copy.
+    - Ensure exclusive access to data before writes it.(write-invalidate)
+    - When read occurs, it misses cache, and is forced to fetch a new copy of the data.(from the cache that has the up-to-date data)
+- Block size matters:
+    - Bigger block size -> increasing bandwidth demands.
+    - False sharing: two unrelated variable located in the same block.
