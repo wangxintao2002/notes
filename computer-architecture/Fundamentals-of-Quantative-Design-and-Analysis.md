@@ -1,0 +1,17 @@
+# Introduction
+- Two changes made it easier to succeed with a new architecture(e.g. RISC):
+    - The virtual elimination of assembly reduced the need for object-code compatibility.
+    - The creation of vendor-independent OS lower the risk of making a new architecture.
+- The RISC-based computer raised the performance bar, forced prior architecture to keep up.
+    - Intel translated 80x86 instructions into RISC-like instructions internally.
+- The hardware renaissance allowed modern programmers to trade performance for productivity.
+    - In replace of perf-oriented language like C and C++, much more program today is done in managed language like Java and Scala.
+- The limits of power forced the microprocessor industry to use multiple efficient processors instead of a single inefficient processor.
+    - Switch from relying solely on ILP to DLP and TLD.
+    - DLP and TLP are explicit parallel, a major burden of programmers.
+- The improvements of processor performance has slowed down, due to:
+    - The slowing of Moore's Law(transistors per chip double every year).
+    - The unchanging power budgets for microprocessors.
+    - The replacement of the single power-hungry processor with several enegy-efficient processors.
+    - the limits to multiprocessing to achieve Amdahl's Law.
+- The only path to improve is specialization.
