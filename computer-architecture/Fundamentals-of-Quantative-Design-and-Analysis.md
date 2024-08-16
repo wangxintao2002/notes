@@ -39,6 +39,6 @@
 - Principle of Locality.
 - Focus on the common case.
 - Amdahl's Law: The perfomance improvement to be gained from using some faster mode for execution is limited by the fraction of time the faster mode can be used.
-    - $Execution time_{new}=Execution time_old \times ((1-Fraction_{enhanced})+\frac{Fraction_enhanced}{Speedup_{enhanced}})$
+    - $Execution time_{new}=Execution time_{old} \times ((1-Fraction_{enhanced})+\frac{Fraction_{enhanced}}{Speedup_{enhanced}})$
     - Serve as a guide to how much an enhancement will improvement performance.
 - The processor performance equation: $CPU time = \frac{Instructions}{Program} \times \frac{Clock cycles}{Instruction} \times \frac{Seconds}{Clock cycle}$
