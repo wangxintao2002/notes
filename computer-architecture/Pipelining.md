@@ -12,6 +12,7 @@
 - Write-Back(WB): Write the result to register file.
 
 - Introducing pipeline registers between successive stages of the pipeline. On the rising edge of the clock cycle, all the results from a given stage are stored in pipeline registers that is used as the input of next stage.
+- Any value needed in on a later pipeline stage must be placed in pipeline register and copied from one to the next, until it is no longer needed.
 
 # Pipeline Hazard
 - Hazard prevent the next instruction from execution during its designated clock cycle.
@@ -26,4 +27,26 @@
     - Read After Write: read of x by j occurs before the write of x by i, j would use the old value.
     - Write After Read: read of x by i occurs after the write of x by j, occur when instructions are reordered, never occur the simpe pipeline.
     - Write After Write: write of x by i occurs after write of x by j, occur when instrutions are reordered or when running times vary.
+
+### Minimizing Data Harzads Stalls by Forwarding
+- The ALU results from both EX/MEM and MEM/WB registers is fed back to ALU inputs. The Forwarding logic detects if it needs forwarding, control logic selects the forwarded results as ALU inputs.
+- The forwarded results are first stored in register then feed to the functional units that need them.
+
+### Data Hazards Requiring Stalls
+- The load instruction has one clock cycle delay that cannot be eliminated by forwarding. CPU has pipeline interlock, which detects this hazard and stalls the pipeline until the hazard is clear.
+
+## Branch Hazards
+- When a branch is executed, it may or may not change the PC to PC + 4. The successive instructions are useless work if the branch were taken.
+- There are four static compile time schemes for branch hazards:
+    - Freeze or flush the pipeline: holding or deleting any instructions after branch until branch destination is known.
+    - Treat every branch as not taken: Need to turn the fetched instruction into no-op if the branch is taken.
+    - Treat every branch as taken.
+    - Delayed branch: Put a delayed slot right after the branch, let compiler decide which instruction should be inserted. The instruction in the delayed slot will executed whether the branch is taken or not.
+
+## Reducing the Cost of Branches Through Prediction
+- As pipelines get deeper and the potential penalty of branches(delayed cycles) increases, using delayed branches become insufficient.
+- We need more aggressive techniques for predicting branches.
+- Static Branch Prediction: Use profile information collected from earlier runs to predict branches.
+- Dynamic Branch Prediction: Predict branches dynamically based on program behavior.
+
 
