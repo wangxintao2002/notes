@@ -77,3 +77,20 @@
 - Multiple exceptions may occur in the same clock cycle, and they can occur out of order. For example, instruction i occurs exception in MEM stage and instruction i+1 occurs exception in IF stage.
 - To implement precise exception, must force exceptions occur in the unpipelined order.
 - Every instructions hold exceptions until commit point(MEM stage), exception in the early stage overrides later exceptions for a given instruction, if trap is taken, invalidate any writes that was made by that instruction.
+
+# Handle Multicycle Operations
+- To support FP operations, the EX cycle may be repeated multiple times to complete the operation, and there may be multiple FP functional units. Like figure C.28. The shortcoming of this approach is obvious, the pipeline behind the repeating instruction will be stalled. Instead, FP adder and multiplier, divider is not pipelined. Insturctions now can have varying run times.
+
+## Hazards and Forwarding in Longer Latency Pipelines
+- Because instructions have varying run times, the number of write to register file can be larger than one in one cycle. WAWs are possible, because instructions no longer reach commit point(WB) in order(out-of-order completion), causing problems with exceptions. Longer latency of operations make stalls for RAW hazards more frequent.
+- Three checks before an instruction can issue in ID stage:
+    - Check for structural hazards
+    - Check for RAW hazards
+    - Check for WAW hazards
+
+## Maintaining Precise Exception
+- Out-of-order completion will result in imprecise exceptions.
+- Buffer the result of an instruction until all the operations issued earlier are complete. Expensive to implement.
+- Use a history file to keep track of original register value, used to rollback when occurs exceptions.
+- Keep track of what operations were in the pipeline and their PCs. After hadling exceptions, software executes all the instructions that precede the latest completed instructions and restart the pipeline after the completed instruction.
+- Allow the instruction issue only if it is certain that all the instructions before will complete without exception.
