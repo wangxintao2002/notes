@@ -48,5 +48,32 @@
 - We need more aggressive techniques for predicting branches.
 - Static Branch Prediction: Use profile information collected from earlier runs to predict branches.
 - Dynamic Branch Prediction: Predict branches dynamically based on program behavior.
+- The deeper the pipeline, the worse the branch penalties in clock cycles.
 
+# What Makes Pipeline Hard to Implement?
+## Dealing With Exeptions
+- In the pipeline, the overlapping of instructions makes it difficult to know whether an instruction can safely change the state of the processor or not.
+- Exceptions may force processor to abort the instructions in the pipeline before they complete.
 
+### Types of Exceptions and Requirements
+- Synchronous v.s. Asychronous
+    - Sychronous: The event happens as expected and is not affected by external factors.
+    - Asychronous: Caused by external to the processor and memory, can be handled after the completion of the current instruction.
+- User requested v.s. Coerced
+    - User requested: User task directly ask for it, can always be handled after the instruction has completed.
+    - Coerced: Caused by hardware event, not predictable.
+- User maskable v.s. Nonmaskable: User maskable event can be disabled by a user task.
+- Within v.s. Between instructions: Within: The event occurs in the middle of the instruction, usually sychronous. The instruction must be stopped and restarted.
+- Resume v.s. Terminate: Whether the program will be terminated after the interrupt.
+
+### Stop and Restarting Execution
+- When an exception occurs, the pipeline control save the pipeline state correctly by:
+    - Forcing a trap instruction into the pipeline on the next IF;
+    - Prevent any state changes of the pipeline for the instructions that will not be completed before the exception is handled by placing zeros into the pipeline registers, starting from the faulting instruction and beyond.
+    - Save the PC of the faulting instruction.
+- The pipeline has precise exceptions if it can be stopped so that the instructions before the faulting instruction can be completed and those after it can be restarted from scratch.
+
+### Exceptions in RISC-V
+- Multiple exceptions may occur in the same clock cycle, and they can occur out of order. For example, instruction i occurs exception in MEM stage and instruction i+1 occurs exception in IF stage.
+- To implement precise exception, must force exceptions occur in the unpipelined order.
+- Every instructions hold exceptions until commit point(MEM stage), exception in the early stage overrides later exceptions for a given instruction, if trap is taken, invalidate any writes that was made by that instruction.
