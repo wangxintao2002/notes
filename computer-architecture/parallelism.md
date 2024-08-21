@@ -13,6 +13,7 @@
         - Two responsibilities:
             > Packaging instructions into issue slots: how many instructions and which instructions can be issued in a given clock rate?
             > Dealing with data and control hazard.
+        - Need extra hardware.
 ## Speculation
 - Allows compilers or processors to guess about the properties of an instruction, to enable execution to begin for other instructions that may depend on the speculated instruction.
 - Speculation mechanism includes both a method to check if the guess was right and a method to unroll the changes that was made by speculated instruction.
