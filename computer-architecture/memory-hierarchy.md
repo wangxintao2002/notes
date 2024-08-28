@@ -1,9 +1,11 @@
 # Introduction
 - Latency: The time delay between a request for data and the beginning of the data transfer.
-- Bandwidth:  The amount of data that can be transferred per unit of time.
+- Bandwidth: The amount of data that can be transferred per unit of time.
+- Footprint: The total space occupied by an application in memory.
 - The lack of significant performance of single core processors has led to slowdown in the growth of the performance gap between processors and DRAM.
 - Multicore processors need more memory bandwidth.
-    - [case study]: i7-6700 can generate 2 data memory references per clock cycle with 4 cores and a 4.2 GHz clock rate. The i7 can generate a peak of 32.8 million 64-bit data memory references per second, that goes to 409.6 GiB/s.
+    - [case study]: i7-6700 can generate 2 data memory references per clock cycle with 4 cores and a 4.2 GHz clock rate. The i7 can generate a peak of 32.8 million 64-bit data memory references per second, that goes to 409.6 GiB/s. Achieved by multiporting and piplining the caches; by using three levels of caches, with two private levels per core and a shared L3 cache.
+- In memory hierarchy, the lower level memory has more capacity but higher latency and less bandwidth. Ideally, most requests will hit on L1 or L2 caches, each layer of hierarchy acts as a bandwidth filter. But when the program has large active footprint, most requests miss in L1 and L2, majority requests go to L3 or DRAM, bandwidth drops.
 
 # Processor Performance
 - CPU execution time = (CPU clock cycles + Memory stall cycles) x Clock cycle time
