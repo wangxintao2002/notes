@@ -25,14 +25,17 @@
         - Simultaneous multi-threading(SMT): multiple threads per clock.
 ## GPUs: Extreme throughput-oriented processors
 - Example on GTX 480:
-    - SIMD unit operate 32 elements at a time(called "warps"), 48 warps simultaneously interleaved, over 1500 elements can be operated concurrently by a core, up to 15 cores. 23000 pieces of data processed concurrently.
-    - In GPUs, assume caches are not going to help, focus on hide latency by multi-threadingi to keep cores busy. Minimize all fancy stuff to leave room for ALUs.
+    - SIMD unit operate 32 elements at a time(called "warps", sharing an instruction stream), 48 warps simultaneously interleaved, over 1500 elements can be operated concurrently by a core, up to 15 cores. 23000 pieces of data processed concurrently.
+    - In GPUs, assume caches are not going to help, focus on hide latency by multi-threading to keep cores busy. Minimize all fancy stuff to leave room for ALUs.
 - Experiment: Element-wise multiplication of two vectors A and B. Assume vectors contain millions of elements. Load input A[i] and B[i], compute, store to C[i].
     - Three memory operations(12 bytes) for every MUL.
     - 480 GPU can do 480 MULs per clock(@ 1.2GHz).
     - Need ~6.4TB/s of bandwidth (12 x 480 x 1.2G) to keep functional units busy(only have 177GB/s).
     - ~3% efficientcy(177GB/s / 6.4TB/s), but 7x faster than 2.6GHz quad-core CPU that connected to 25GB/s memory bus.
 - Bandwidth limited: processor request data at a too high rate, the memory can't keep up. No amount of latency hiding helps.
+- Example on NVIDIA V100 GPU:
+    - One core includes 4 sub-core, each sub-core contains 16 SIMD fp32 units, SIMD int units, 8 SIMD fp64 units, Tensor core unit and Load/store unit. 64 warps in total, each sub-core is capable of scheduling and interleaving up to 16 warps. Each warp has execution context for 32 CUDA threads, executed in a SIMD manner(SIMT, single instruction multiple CUDA thread). 128KB of shared memory and L1 cache.
+    - A V100 GPU has 80 unit described above.
 
 # Summary
 - Three major ideas that modern processors employ to varying degrees
