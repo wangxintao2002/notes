@@ -16,7 +16,7 @@
     - If long task is scheduled to be issue last, it will lead to load imbalance. Need to discover it and schedule long tasks first to balance the load.
     - May use multiple work queues, threads pull task from own work queue, if own work queue is empty, steal tasks from others. Costly synchronization occurs when stealing. All dependencies need to be satisfied for a task to be assigned to a worker thread.
 
-# Scheduling fork-join programs
+## Scheduling fork-join programs
 - Using pthread_create to launch independent work, and use pthread_join to syncronize.
 - Heavyweight spwan operation, many more threads than cores, leads to context switching overhead and larger working set, less cache locality.
 - Consider execution at point of spawn of foo() and then call bar(), What thread should execute foo()? What thread should execute bar()? 
@@ -30,8 +30,51 @@
     - Biggest work is on the top of the queue, steal from front avoid stealing thread from stealing frequently.
     - Local thread pull task from tail and stealing thread steal task from front. Reduces contention between local thread and stealing threads.
 
-# Pool of worker threads
+## Pool of worker threads
 - All threads created at application launch, exactly as many threads as execution contexts in the machine. Each thread pulls task from worker queue if work exists.
 
-# Divide-and-conquer parallelism
+## Divide-and-conquer parallelism
 - Instead of spawning work in a for loop sequentially, generate work in parallel using recursive_for. If the range of the input is less than a particular granularity, spawns work in a for loop, else divide the range in half and spawns work responsible for one of them recursively.
+
+# Minimize communication cost
+- Each thread has its own address space, threads communication and synchronize by sending/receiving messages. Block or non-block send and receive.
+- Using non-block send/receive to pipeline the communication to reduce the cost, A general model of communication:
+    - Total communication time = overhead + occupancy + network delay
+    - Total communication cost = communication time - overlap
+    - overlap: portion of communication performed concurrently with other work.
+    - overhead: time spend on the communication by a processor
+    - occupancy: time for data to pass through slowest component of system
+    - network delay: everything else
+    - occupancy determines communication rate.
+- Communication-to-computation ratio: the ratio between the amount of communication and the amount of computation.
+    - Think of communication between:
+        - a processor and its cache.
+        - processor and memory.
+        - processor and remote memory.
+- Inherent communication: information that must be moved between processors to carry out the algorithm given the specified assignment.
+    - Example: computation operands are located in remote memory.
+    - Good assignment decisions can reduce inherent communication.
+- Artifactual communication: all other communication, results from system implementation.
+    - System has minimum gruanularity of data transfer, or the same data communicated(load from memory) multiple times due to cache capacity miss.
+    - Need to expolit spatial locality with proper granularity of communication/data transfer and cache stuff.
+
+## Techniques for reducing communication
+- Improving cache temporal locality by changing the order of the load inputs
+or fusing loops(combine multiple loops into one loop).
+- Improve arithmetic instensity by sharing data. Gather the tasks that operate on the same data, threads load all the data the share to the shared memory and work on it.
+
+## Summary of reducing communication cost
+- Reduce the overhead of sender/receiver: fewer and larger messages(amortize overhead), coalesce many small messages into large ones.
+- Reduce latency of communication: reconstruct code to exploit locality or improve hardware communication architecture.
+- Increase communication/computation overlap: use async communication, pipelining, multi-threading, prefetching, additional concurrency(more concurrency than exec unit) to hide latency.
+
+# Contention
+- Occurs when many requests to a resource are made whithin a small window of time(access to memory, lock, etc).
+- Ways to reduce contention: replicate contended resources(e.g. local copies, fine-grained locks).
+
+# Performance analysis strategies
+- Determin if performance is limited by computation, memory bandwidth or synchrounization.
+- If exec time increase linearly with operation count as non-memory instruction are added, then the code is instruction-rate limited.
+- If exec time decrease not much with removing all non-memory instruction but load same data, then there is memory bottleneck.
+- Change all array access to A[0] to see an upper bound on benifit of improving locality of data access.
+- Rmove all atomic operations or locks establishes an upper bound on benifit of reducing sync overhead.
