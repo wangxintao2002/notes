@@ -35,6 +35,14 @@
 ### Data Hazards Requiring Stalls
 - The load instruction has one clock cycle delay that cannot be eliminated by forwarding. CPU has pipeline interlock, which detects this hazard and stalls the pipeline until the hazard is clear.
 
+### Overcomming Data Hazards With Dynamic Scheduling
+- Dynamic scheduling eliminates data hazards that can not be avoid by forwarding. It depends on the hardware to reorder instructions execution to reduce stalls while maintaining data flow and exception behavior. Dynamic scheduling has several advantages at the cost of hardware complexity:
+    - Transplantable: code that was compiled with one pipeline in mind can run effectively on a different pipeline, no re-compilation or multiple binaries needed.
+    - It enables handling dependencies that was unknown at compile time.
+    - It hides latency by executes other code while waiting on a cache miss.
+
+
+
 ## Branch Hazards
 - When a branch is executed, it may or may not change the PC to PC + 4. The successive instructions are useless work if the branch were taken.
 - There are four static compile time schemes for branch hazards:
