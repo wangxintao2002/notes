@@ -20,9 +20,9 @@
 - Use multi-threading to reduce stalls(hide latency).
     - Key idea of throughput-oriented systems: Potentially increase time(time that stalled thread become runnable waiting for being scheduled) to complete work by any one thread, in order to increase system throughput when running multiple threads.
     - Hardware-supported multi-threading:
-        - Each core has multiple execution contexts for multiple threads, processor is responsible for scheduling threads, not OS.
+        - Each core has multiple execution contexts (register file, PC, not fetch/decode or exec units) for multiple threads, processor is responsible for scheduling threads, not OS.
         - Interleaved multi-threading: one thread per clock.
-        - Simultaneous multi-threading(SMT): multiple threads per clock.
+        - Simultaneous multi-threading(SMT): multiple threads per clock (with additional fetch/decode and exec uints).
 ## GPUs: Extreme throughput-oriented processors
 - Example on GTX 480:
     - SIMD unit operate 32 elements at a time(called "warps", sharing an instruction stream), 48 warps simultaneously interleaved, over 1500 elements can be operated concurrently by a core, up to 15 cores. 23000 pieces of data processed concurrently.
