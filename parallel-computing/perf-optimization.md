@@ -73,6 +73,8 @@ or fusing loops(combine multiple loops into one loop).
 - Ways to reduce contention: replicate contended resources(e.g. local copies, fine-grained locks).
 
 # Performance analysis strategies
+- Always, always try the simplest parallel solution first, the measure performance to see where you stand.
+- Insert assertions and logs in code, test programs with 1 thread or 2 threads first.
 - Determin if performance is limited by computation, memory bandwidth or synchrounization.
 - If exec time increase linearly with operation count as non-memory instruction are added, then the code is instruction-rate limited.
 - If exec time decrease not much with removing all non-memory instruction but load same data, then there is memory bottleneck.
